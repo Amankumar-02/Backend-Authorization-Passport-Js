@@ -1,5 +1,6 @@
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as GitHubStrategy } from "passport-github2";
 import { User } from "./model/user.model.js";
 import bcrypt from 'bcrypt';
 
@@ -22,14 +23,24 @@ export const initializingPassport = (passport)=>{
             return done(error, false);
         }
     }));
-    // google strategy
+    // google strategys
     passport.use(new GoogleStrategy({
-        clientID: process.env.CLIENT_ID,
-        clientSecret: process.env.CLIENT_SECRET,
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: "http://localhost:3000/auth/google/callback"
     }, function (accessToken, refreshToken, profile, cb) {
         cb(null, profile)
     }));
+    // github strategy
+    passport.use(new GitHubStrategy({
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackURL: "http://localhost:3000/auth/github/callback"
+      },
+      function(accessToken, refreshToken, profile, done) {
+        done(null, profile)
+      }
+    ));
     // passport.serializeUser((user, done)=>{
     //     done(null, user.id);
     // });

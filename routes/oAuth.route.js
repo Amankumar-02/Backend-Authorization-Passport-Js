@@ -30,30 +30,31 @@ oAuthRouter.get("/protected", (req, res, next)=>{
   res.redirect("/users/profile")
 });
 
-// {
-//   id: '108661269875854717495',
-//   displayName: 'Movies mkv',
-//   name: { familyName: 'mkv', givenName: 'Movies' },
-//   photos: [
-//     {
-//       value: 'https://lh3.googleusercontent.com/a/ACg8ocIWAz6RESgJ-Yf6JykxSgYDRuAZpnVfPgFLXG3RJX5FusIF1g=s96-c'
-//     }
-//   ],
-//   provider: 'google',
-//   _raw: '{\n' +
-//     '  "sub": "108661269875854717495",\n' +
-//     '  "name": "Movies mkv",\n' +
-//     '  "given_name": "Movies",\n' +
-//     '  "family_name": "mkv",\n' +
-//     '  "picture": "https://lh3.googleusercontent.com/a/ACg8ocIWAz6RESgJ-Yf6JykxSgYDRuAZpnVfPgFLXG3RJX5FusIF1g\\u003ds96-c",\n' +
-//     '  "locale": "en"\n' +
-//     '}',
-//   _json: {
-//     sub: '108661269875854717495',
-//     name: 'Movies mkv',
-//     given_name: 'Movies',
-//     family_name: 'mkv',
-//     picture: 'https://lh3.googleusercontent.com/a/ACg8ocIWAz6RESgJ-Yf6JykxSgYDRuAZpnVfPgFLXG3RJX5FusIF1g=s96-c',
-//     locale: 'en'
-//   }
-// }
+
+
+oAuthRouter.get('/github',
+  passport.authenticate('github', { scope: ['user:email'] 
+}));
+
+oAuthRouter.get('/github/callback', 
+  passport.authenticate('github', { failureRedirect: '/auth/github/failure', successRedirect: "/auth/github/protected" }
+));
+
+oAuthRouter.get("/github/failure", (req, res)=>{
+  res.send("Something went wrong!!")
+});
+
+oAuthRouter.get("/github/protected", (req, res, next)=>{
+  req.user? next() : res.sendStatus(401)
+}, async(req, res)=>{
+  const exists = await OAuth.findOne({username:req.user.displayName});
+  if(!exists){
+    const userData = await OAuth.create({
+      _id: req.user.id,
+      username: req.user.displayName,
+      photos: req.user.photos[0].value || "",
+      provider: req.user.provider,
+    });
+  }
+  res.redirect("/users/profile")
+});
