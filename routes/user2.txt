@@ -1,0 +1,70 @@
+import { Router } from 'express';
+import { User } from '../model/user.model.js';
+import passport from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
+
+passport.use(new LocalStrategy(User.authenticate()));
+
+export const userRouter = Router();
+
+// checking middleware user is logged in or not
+const isLoggedIn = (req, res, next)=>{
+  if(req.isAuthenticated()){
+      return next();
+  }
+  res.redirect("/users");
+};
+const isLoggedOut = (req, res, next)=>{
+  if(req.isAuthenticated()){
+      res.redirect("/users/profile");
+  }else{
+      return next();
+  }
+};
+
+userRouter.get('/', isLoggedOut, function(req, res, next) {
+  // res.send('respond with a resource');
+  res.render("login")
+});
+userRouter.get('/registerPage', isLoggedOut, (req, res)=>{
+  res.render("register")
+});
+userRouter.get('/profile', isLoggedIn, (req, res)=>{
+  res.render("profile")
+})
+
+
+userRouter.post('/register', function (req, res, next) {
+  const newUser = new User({ 
+    username: req.body.username,
+    password: req.body.password,
+ });
+  // res.render('index', { title: 'Express' });
+  // res.json(newUser);
+  User.register(newUser, req.body.password, (err) => {
+    if (err) {
+      console.error(err);
+      res.redirect('/users'); // Redirect to registration page on error
+    } else {
+      // after creating, user logged in
+      passport.authenticate("local")(req, res, () => {
+        // navigate to profile route
+        res.redirect('/users/profile');
+      });
+    }
+  });
+});
+userRouter.post('/login', passport.authenticate("local", {
+  // login successfull ==> go to profile
+  successRedirect: "/users/profile",
+  // login unsuccessfull ==> go to home
+  failureRedirect: "/users",
+}), (req, res) => {
+});
+
+userRouter.get('/logout', (req, res, next)=>{
+  req.logout((err)=>{
+      if(err){return next(err)};
+      res.redirect('/users');
+  });
+});
