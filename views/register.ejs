@@ -15,9 +15,12 @@
     <p class="text-danger"><%= registerErrorAlert %></p>
     <form action="/users/registerUser" , method="post">
       <div class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">User Name</label>
-        <input name="username" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-        <div id="emailHelp" class="form-text">We'll never share your details with anyone else.</div>
+        <label for="exampleInputUserName1" class="form-label">User Name</label>
+        <input name="username" type="text" class="form-control" id="exampleInputUserName1" aria-describedby="emailHelp">
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputFullName1" class="form-label">Full Name</label>
+        <input name="fullname" type="text" class="form-control" id="exampleInputFullName1" aria-describedby="emailHelp">
       </div>
       <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label">Password</label>
@@ -27,6 +30,7 @@
     </form>
     <hr>
     <a href="/users" class="btn btn-primary">Go To Login Page</a>
+    <a href="/auth/google" class="btn btn-secondary ">Google Login</a>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

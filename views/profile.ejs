@@ -9,6 +9,14 @@
   <body>
     <div class="container">
         <h1>Welcome to Profile</h1>
+        <div>
+          <ul>
+            <li>User Name: <%= profileUserData.username %></li>
+            <li>Full Name: <%= profileUserData.fullname %></li>
+            <li>User Image: <img src="<%= profileUserData.photos || "https://i.seadn.io/gae/dQy3FslC66s1Guv8oxTqbFhg9_ZzcF-EMl-ghKI5l-uI1XwyuL8aD5Wt3zr7Rvxg1PJouFIkiUc3T0GSF3wh0XO3e8m4T0P55HAm?auto=format&dpr=1&w=1000" %>"" alt="" class="w-25 h-25"></li>
+            
+          </ul>
+        </div>
         <a href="/users/logoutUser" class="btn btn-danger">Logout</a>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

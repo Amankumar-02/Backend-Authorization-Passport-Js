@@ -1,8 +1,10 @@
 import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { User } from "./model/user.model.js";
 import bcrypt from 'bcrypt';
 
 export const initializingPassport = (passport)=>{
+    // local strategy
     passport.use(new LocalStrategy(async function(username, password, done){
         try {
             const user = await User.findOne({username});
@@ -20,17 +22,32 @@ export const initializingPassport = (passport)=>{
             return done(error, false);
         }
     }));
+    // google strategy
+    passport.use(new GoogleStrategy({
+        clientID: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        callbackURL: "http://localhost:3000/auth/google/callback"
+    }, function (accessToken, refreshToken, profile, cb) {
+        cb(null, profile)
+    }));
+    // passport.serializeUser((user, done)=>{
+    //     done(null, user.id);
+    // });
+    // passport.deserializeUser(async(id, done)=>{
+    //     try {
+    //         const user = await User.findById(id);
+    //         done(null, user);
+    //     } catch (error) {
+    //         done(error, false);
+    //     }
+    // });
     passport.serializeUser((user, done)=>{
-        done(null, user.id);
+        done(null, user);
     });
-    passport.deserializeUser(async(id, done)=>{
-        try {
-            const user = await User.findById(id);
-            done(null, user);
-        } catch (error) {
-            done(error, false);
-        }
+    passport.deserializeUser(async(user, done)=>{
+        done(null, user);
     });
+
 };
 
 export const isLoggedIn = (req, res, next)=>{

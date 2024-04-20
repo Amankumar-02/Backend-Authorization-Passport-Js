@@ -5,27 +5,27 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import flash from 'connect-flash';
 import passport from 'passport';
-import { initializingPassport } from './passportConfig.js';
+import { initializingPassport} from './passportConfig.js';
 
 import { indexRouter } from './routes/index.js';
 import { userRouter } from './routes/users.js';
+import { oAuthRouter } from './routes/oAuth.route.js';
 
 export const app = express();
 export const port = 3000;
 
-// view engine setup
 app.set('view engine', 'ejs');
 
-// store client send data
 app.use(session({
-  resave: false, // if session value not change then dont resave the value
-  saveUninitialized: false, // ignore those data which have no name
-  secret: process.env.SESSION_SECRET // encrypt the data on behalf of this secret key
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.SESSION_SECRET,
+  cookie: {secure:false}
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
-initializingPassport(passport)
+initializingPassport(passport);
 
 app.use(flash());
 
@@ -37,6 +37,7 @@ app.use(express.static('public'));
 
 app.use('/', indexRouter);
 app.use('/users', userRouter);
+app.use('/auth', oAuthRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
